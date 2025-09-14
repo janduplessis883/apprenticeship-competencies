@@ -4,7 +4,7 @@
 base = "light"
 
 # Primary color for your app, specified as a hex or named CSS color
-primaryColor = "#0284c7"
+primaryColor = "#eab308"
 
 # Background color for your app
 backgroundColor = "#fafafa"

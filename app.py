@@ -340,7 +340,7 @@ human = st.sidebar.checkbox("Apply human writing style", value=True)
 explain = st.sidebar.checkbox("Explain choices", value=True)
 activity = st.text_area("Briefly describe what you have learned:", height=150)
 
-submit = st.button("Generate Competencies")
+submit = st.button("Generate Competencies", type="primary")
 if human and explain:
     prompt = f"I am enrolled in a Data Science Apprenticeship and I need to write competency statements based on what I have learned. Here is a description of what I have learned: {activity}. Using the following list of competencies, write me 3-5 competency statements that match what I have learned. Each statement should start with the competency code (e.g., **K1**, **S2**, **B3**) followed by a colon and then the statement. Make sure the statements are clear, concise, and directly related to the activity I described. Here is the list of competencies: {competencies_list}. After you generate the competency statements, please revise them to read naturally, like something a thoughtful human would write. Focus on clarity, flow, and tone. Apply these rules: {human_writing}, after your competency statements write a paragraph explaininig your choices and why you made them."
 elif human and not explain:
@@ -357,3 +357,6 @@ if submit and activity:
         st.write("**Generated Competencies** to consider:")
         with st.container(border=True):
             st.markdown(response)
+
+html_content = """<img alt="Static Badge" src="https://img.shields.io/badge/github-janduplessis883-%234a83c0">"""
+st.sidebar.html(html_content)
