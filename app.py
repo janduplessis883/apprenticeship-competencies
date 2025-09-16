@@ -1,5 +1,6 @@
 import streamlit as st
 from groq import Groq
+import re
 
 # Initialize the Groq client
 client = Groq(api_key=st.secrets["GROQ_API_KEY"])
@@ -335,20 +336,25 @@ def ask_groq(prompt: str, model: str = "meta-llama/llama-4-scout-17b-16e-instruc
     return chat_completion.choices[0].message.content
 
 st.sidebar.header("Settings")
-model = st.sidebar.selectbox("Model", ["moonshotai/kimi-k2-instruct-0905", "meta-llama/llama-4-maverick-17b-128e-instruct", "qwen/qwen3-32b", "openai/gpt-oss-120b"], index=0)
+model = st.sidebar.selectbox("Select a Model:", ["moonshotai/kimi-k2-instruct-0905", "meta-llama/llama-4-maverick-17b-128e-instruct", "qwen/qwen3-32b", "openai/gpt-oss-120b"], index=2)
+skills = st.sidebar.number_input("Number of Competencies:", min_value=1, max_value=7, value=3)
 human = st.sidebar.checkbox("Apply human writing style", value=True)
 explain = st.sidebar.checkbox("Explain choices", value=True)
 activity = st.text_area("Briefly describe what you have learned:", height=150)
 
+html_content = """<BR><BR><img alt="Static Badge" src="https://img.shields.io/badge/github-janduplessis883-%234a83c0">"""
+st.sidebar.html(html_content)
+
+
 submit = st.button("Generate Competencies", type="primary")
 if human and explain:
-    prompt = f"I am enrolled in a Data Science Apprenticeship and I need to write competency statements based on what I have learned. Here is a description of what I have learned: {activity}. Using the following list of competencies, write me 3-5 competency statements that match what I have learned. Each statement should start with the competency code (e.g., **K1**, **S2**, **B3**) followed by a colon and then the statement. Make sure the statements are clear, concise, and directly related to the activity I described. Here is the list of competencies: {competencies_list}. After you generate the competency statements, please revise them to read naturally, like something a thoughtful human would write. Focus on clarity, flow, and tone. Apply these rules: {human_writing}, after your competency statements write a paragraph explaininig your choices and why you made them."
+    prompt = f"I am enrolled in a Data Science Apprenticeship and I need to write competency statements based on what I have learned. Here is a description of what I have learned: {activity}. Using the following list of competencies, write me {skills} competency statements that match what I have learned. Each statement should start with the competency code (e.g., **K1**, **S2**, **B3**) followed by a colon and then the statement. Make sure the statements are clear, concise, and directly related to the activity I described. Here is the list of competencies: {competencies_list}. After you generate the competency statements, please revise them to read naturally, like something a thoughtful human would write. Focus on clarity, flow, and tone. Apply these rules: {human_writing}, after your competency statements write a paragraph explaininig your choices and why you made them, and return the original text for each competency statement."
 elif human and not explain:
-    prompt = f"I am enrolled in a Data Science Apprenticeship and I need to write competency statements based on what I have learned. Here is a description of what I have learned: {activity}. Using the following list of competencies, write me 3-5 competency statements that match what I have learned. Each statement should start with the competency code (e.g., **K1**, **S2**, **B3**) followed by a colon and then the statement. Make sure the statements are clear, concise, and directly related to the activity I described. Here is the list of competencies: {competencies_list}. After you generate the competency statements, please revise them to read naturally, like something a thoughtful human would write. Focus on clarity, flow, and tone. Apply these rules: {human_writing}."
+    prompt = f"I am enrolled in a Data Science Apprenticeship and I need to write competency statements based on what I have learned. Here is a description of what I have learned: {activity}. Using the following list of competencies, write me {skills} competency statements that match what I have learned. Each statement should start with the competency code (e.g., **K1**, **S2**, **B3**) followed by a colon and then the statement. Make sure the statements are clear, concise, and directly related to the activity I described. Here is the list of competencies: {competencies_list}. After you generate the competency statements, please revise them to read naturally, like something a thoughtful human would write. Focus on clarity, flow, and tone. Apply these rules: {human_writing}."
 elif not human and explain:
-    prompt = f"I am enrolled in a Data Science Apprenticeship and I need to write competency statements based on what I have learned. Here is a description of what I have learned: {activity}. Using the following list of competencies, write me 3-5 competency statements that match what I have learned. Each statement should start with the competency code (e.g., **K1**, **S2**, **B3**) followed by a colon and then the statement. Make sure the statements are clear, concise, and directly related to the activity I described. Here is the list of competencies: {competencies_list}, after your competency statements write a paragraph explaininig your choices and why you made them."
+    prompt = f"I am enrolled in a Data Science Apprenticeship and I need to write competency statements based on what I have learned. Here is a description of what I have learned: {activity}. Using the following list of competencies, write me {skills} competency statements that match what I have learned. Each statement should start with the competency code (e.g., **K1**, **S2**, **B3**) followed by a colon and then the statement. Make sure the statements are clear, concise, and directly related to the activity I described. Here is the list of competencies: {competencies_list}, after your competency statements write a paragraph explaininig your choices and why you made them, and return the original text for each competency statement."
 elif not human and not explain:
-    prompt = f"I am enrolled in a Data Science Apprenticeship and I need to write competency statements based on what I have learned. Here is a description of what I have learned: {activity}. Using the following list of competencies, write me 3-5 competency statements that match what I have learned. Each statement should start with the competency code (e.g., **K1**, **S2**, **B3**) followed by a colon and then the statement. Make sure the statements are clear, concise, and directly related to the activity I described. Here is the list of competencies: {competencies_list}."
+    prompt = f"I am enrolled in a Data Science Apprenticeship and I need to write competency statements based on what I have learned. Here is a description of what I have learned: {activity}. Using the following list of competencies, write me {skills} competency statements that match what I have learned. Each statement should start with the competency code (e.g., **K1**, **S2**, **B3**) followed by a colon and then the statement. Make sure the statements are clear, concise, and directly related to the activity I described. Here is the list of competencies: {competencies_list}."
 
 if submit and activity:
     with st.spinner("Generating competencies..."):
@@ -356,7 +362,11 @@ if submit and activity:
         response = ask_groq(prompt, model=model)
         st.write("**Generated Competencies** to consider:")
         with st.container(border=True):
-            st.markdown(response)
-
-html_content = """<img alt="Static Badge" src="https://img.shields.io/badge/github-janduplessis883-%234a83c0">"""
-st.sidebar.html(html_content)
+            # extract reasoning separately if you still want to make it optional
+            match = re.search(r"<think>(.*?)</think>", response, flags=re.DOTALL)
+            reasoning = match.group(1).strip() if match else None
+            visible_text = re.sub(r"<think>.*?</think>", "", response, flags=re.DOTALL)
+            if reasoning:
+                with st.expander("Show hidden reasoning"):
+                    st.markdown(f"{reasoning}")
+            st.markdown(visible_text)

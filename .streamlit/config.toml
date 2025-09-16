@@ -27,6 +27,3 @@ showPyplotGlobalUse = false
 
 [server]
 enableStaticServing = false
-
-[upload]
-file_formats = ["csv", "xlsx"]
