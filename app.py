@@ -361,7 +361,7 @@ if submit and activity:
     with st.spinner("Generating competencies...", show_time=True):
         prompt = prompt
         response = ask_groq(prompt, model=model)
-        st.write("**Generated Competencies** to consider:")
+        st.write("### Competencies to consider:")
         with st.container(border=True):
             # extract reasoning separately if you still want to make it optional
             match = re.search(r"<think>(.*?)</think>", response, flags=re.DOTALL)
