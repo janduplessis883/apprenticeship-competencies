@@ -315,7 +315,8 @@ Before and After Example
 """
 
 
-st.set_page_config(page_title="Apprenticeship Competencies", page_icon="🤖", layout="centered")
+st.set_page_config(page_title="Apprenticeship Competencies", page_icon=":material/robot_2:", layout="centered")
+
 st.logo("ac.png", size="large")
 st.title("Apprenticeship Competencies")
 
@@ -340,7 +341,7 @@ model = st.sidebar.selectbox("Select a Model:", ["moonshotai/kimi-k2-instruct-09
 skills = st.sidebar.number_input("Number of Competencies:", min_value=1, max_value=7, value=3)
 human = st.sidebar.checkbox("Apply human writing style", value=True)
 explain = st.sidebar.checkbox("Explain choices", value=True)
-activity = st.text_area("Briefly describe what you have learned:", height=150)
+activity = st.text_area("Briefly describe what you have learned:", height=250)
 
 html_content = """<BR><BR><img alt="Static Badge" src="https://img.shields.io/badge/github-janduplessis883-%234a83c0">"""
 st.sidebar.html(html_content)
